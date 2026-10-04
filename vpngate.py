@@ -51,7 +51,11 @@ VPNGATE_MIRROR = os.environ.get(
     "https://raw.githubusercontent.com/fdciabdul/Vpngate-Scraper-API/main/json/data.json",
 )
 # 已部署的 Cloudflare Worker 检测接口 (GET /check?proxyip=host:port, 实测确认)
-WORKER_CHECK_URL = os.environ.get("CHECK_WORKER", "haihai.annjek.us.ci/check?sstp=vpn:vpn@")
+# 注意: 必须带 http(s):// 前缀, 否则 requests 会报 MissingSchema
+WORKER_CHECK_URL = os.environ.get(
+    "CHECK_WORKER",
+    "https://haihai.annjek.us.ci/check?sstp=vpn:vpn@",
+)
 CONCURRENCY = max(1, int(os.environ.get("CHECK_CONCURRENCY", "32")))   # 与 Worker 网页端一致的并发模型
 CHECK_TIMEOUT = float(os.environ.get("CHECK_TIMEOUT", "90"))          # 单请求客户端超时 (秒)
 MAX_CHECK_NODES = int(os.environ.get("MAX_CHECK_NODES", "0"))         # 0=不限; 本地测试可设小值
@@ -92,6 +96,128 @@ COUNTRY_ZH = {
     "MD": "摩尔多瓦", "AM": "亚美尼亚", "KZ": "哈萨克斯坦", "UZ": "乌兹别克斯坦",
     "MN": "蒙古", "NP": "尼泊尔", "LK": "斯里兰卡", "MM": "缅甸",
 }
+
+# edgetunnel 完整订阅 (vless://) 配置
+EDT_UUID = os.environ.get("EDT_UUID", "1f5b9308-8208-46a6-809b-f1f33a397bba")
+EDT_DOMAIN = os.environ.get("EDT_DOMAIN", "limang.annjek.us.ci")
+EDT_FINGERPRINT = os.environ.get("EDT_FINGERPRINT", "chrome")
+SUB_URL = os.environ.get("SUB_URL", "https://jerylihub.github.io/gate/sub.txt")
+
+# edgetunnel 入口地址池: 客户端直连 Cloudflare 的优选 IP:端口 (循环分配给每个国家节点当入口)
+# 可通过环境变量 EDGE_HOSTS 覆盖 (逗号分隔)
+_DEFAULT_EDGE_HOSTS = (
+    "cdn.555586.xyz:443,"
+    "www.gov.il:443,"
+    "www.vmware.com:443,"
+    "so.360832.xyz:443,"
+    "www.blibli.com:443,"
+    "mfa.gov.ua:443,"
+    "wppaunz.com:443,"
+    "53.fs1.hubspotusercontent-na1.net:443,"
+    "academy.7shifts.com:443,"
+    "www.shopify.com:443,"
+    "cf.090227.xyz:443,"
+    "idc.urkeji.com:443,"
+    "www.mastervolt.com:443,"
+    "guide.for.edu.sg:443,"
+    "www.bangbenjiaju.com:443,"
+    "www.dbs.com.sg:443,"
+    "baota.us.kg:443,"
+    "staticdelivery.nexusmods.com:443,"
+    "www.dentoncounty.gov:443,"
+    "linear.app:443,"
+    "www.zendesk.com:443,"
+    "cmcc.cc.cd:443,"
+    "www.mc.js.cool:443,"
+    "store.ubi.com:443,"
+    "jobsdb.com:443,"
+    "cf.777791.xyz:443,"
+    "kniu.cc:443,"
+    "op.chinwa.eu.cc:443,"
+    "dnew.cc:443,"
+    "www.giannidelprete.it:443,"
+    "hzytjy.cn:443,"
+    "markmonitor.com:443,"
+    "openai.com:443,"
+    "funko.com:443,"
+    "www.leics.police.uk:443,"
+    "versantstore.pearson.com:443,"
+    "securecircle.com:443,"
+    "kickstarter.com:443,"
+    "www.vastnovel.com:443,"
+    "thebeat.gehealthcare.com:443,"
+    "www.crazygames.fr:443,"
+    "serviceshub.samsclub.com:443,"
+    "www.carousell.sg:443,"
+    "cf.yj250.bond:443,"
+    "www.xiaoshuofen.com:443,"
+    "www.udacity.com:443,"
+    "img.css.sd:443,"
+    "www.wto.org:443,"
+    "www.sage.com:443,"
+    "mail.notion.com:443,"
+    "vps.cheng2001.top:443,"
+    "cf.itv888.cn:443,"
+    "www.5h.com:443,"
+    "p.etime.vip:443,"
+    "constitution.congress.gov:443,"
+    "cdn.cnno.de:443,"
+    "www.galgamex.net:443,"
+    "cloudflare.idc.rocks:443,"
+    "www.sofi.com:443,"
+    "spring.io:443,"
+    "cf.3666888.xyz:443,"
+    "neko.cloudd.eu.org:443,"
+    "ahrefs.com:443,"
+    "www.bis.gov:443,"
+    "egov.uscis.gov:443,"
+    "www.swowd.com:443,"
+    "cf.1o.ee:443,"
+    "www.broadcom.com:443,"
+    "www.akasantech.com:443,"
+    "fn.130519.xyz:443,"
+    "cdn.7zz.cn:443,"
+    "m.iyf.tv:443,"
+    "coreweave.com:443,"
+    "cdn.ddeed.de:443,"
+    "stores.staples.com:443,"
+    "uspto.gov:443,"
+    "c-power.com.cn:443,"
+    "cf.92555.xyz:443,"
+    "prizepicks.com:443,"
+    "www.mfyx.cn:443,"
+    "cf.xreak.top:443,"
+    "cdn.204910.best:443,"
+    "cfplus.255520.xyz:443,"
+    "bbs.alipansou.com:443,"
+    "auto.dolby.dpdns.org:443,"
+    "www.deepl.com:443,"
+    "login.rockwellautomation.com:443,"
+    "www.sloomb.com:443,"
+    "saas.sin.fan:443,"
+    "cdn.667891.xyz:443,"
+    "tt.78607323.xyz:443,"
+    "www.wuduanyun.com:443,"
+    "saas.072159.xyz:443,"
+    "eii.at:443,"
+    "cf.nyanya.moe:443,"
+    "cf.254301.xyz:443,"
+    "cdn.ctn32.us.kg:443,"
+    "api.gzcrtw.com:443,"
+    "cf.877774.xyz:443,"
+    "224322.xyz:443,"
+    "cf-cname.xingpingcn.top:443"
+)
+
+EDGE_HOSTS = [
+    h.strip()
+    for h in os.environ.get("EDGE_HOSTS", _DEFAULT_EDGE_HOSTS).split(",")
+    if h.strip()
+]
+
+HOSTS_URL = os.environ.get("HOSTS_URL", "https://jerylihub.github.io/gate/hosts.txt")
+CHAIN_URL = os.environ.get("CHAIN_URL", "https://jerylihub.github.io/gate/chains.txt")
+
 
 # ---------------------------------------------------------------------------
 # 日志 (用户要求的分区格式)
@@ -151,6 +277,13 @@ def fetch_vpngate():
     die("VPN Gate 官方 API 与回退镜像均不可用, 数据源完全失败 (不生成空结果, 本次运行判定失败)")
 
 
+def _safe_field(fields, i):
+    """按索引取字段并 strip, 越界返回空串。"""
+    if 0 <= i < len(fields):
+        return fields[i].strip()
+    return ""
+
+
 def parse_csv(text):
     """解析官方 CSV。表头行含 'HostName'; 按列名映射, 列名缺失时用固定位置回退。"""
     lines = [ln for ln in text.splitlines() if ln.strip()]
@@ -176,27 +309,29 @@ def parse_csv(text):
             if "base64" in h.lower():
                 idx["openvpn_configdata_base64"] = i
                 break
-    pos = {"hostname": idx.get("hostname", 0),
-           "ip": idx.get("ip", 1),
-           "countrylong": idx.get("countrylong", 5),
-           "countryshort": idx.get("countryshort", 6),
-           "openvpn_configdata_base64": idx.get("openvpn_configdata_base64", len(header) - 1)}
+    pos = {
+        "hostname": idx.get("hostname", 0),
+        "ip": idx.get("ip", 1),
+        "countrylong": idx.get("countrylong", 5),
+        "countryshort": idx.get("countryshort", 6),
+        "openvpn_configdata_base64": idx.get("openvpn_configdata_base64", len(header) - 1),
+    }
 
     rows = []
     for ln in data_lines:
         fields = next(csv.reader(io.StringIO(ln)))
         if len(fields) < 7:
             continue
-        host = fields[pos["hostname"]].strip()
-        ip = fields[pos["ip"]].strip()
+        host = _safe_field(fields, pos["hostname"])
+        ip = _safe_field(fields, pos["ip"])
         if not host or not ip:
             continue
         rows.append({
             "host": host,
             "ip": ip,
-            "country_long": fields[pos["countrylong"]].strip(),
-            "country_short": fields[pos["countryshort"]].strip(),
-            "config_b64": fields[pos["openvpn_configdata_base64"]].strip(),
+            "country_long": _safe_field(fields, pos["countrylong"]),
+            "country_short": _safe_field(fields, pos["countryshort"]),
+            "config_b64": _safe_field(fields, pos["openvpn_configdata_base64"]),
         })
     return rows
 
@@ -310,7 +445,10 @@ def classify_network(host, exit_org, is_datacenter=None):
 def check_one(node, session):
     """调用 Worker 检测单节点。返回节点+检测结果的合并 dict。
     单节点失败 (网络错误/非 200/坏 JSON) 不会抛出, 统一记 success=False。"""
-    url = WORKER_CHECK_URL + quote(f"{node['host']}:{node['port']}", safe="")
+    base = WORKER_CHECK_URL
+    if not base.startswith(("http://", "https://")):
+        base = "https://" + base
+    url = base + quote(f"{node['host']}:{node['port']}", safe="")
     out = dict(node)
     out["protocol"] = "sstp"
     out["link"] = f"sstp://vpn:vpn@{node['host']}:{node['port']}"
@@ -407,9 +545,6 @@ def build_outputs(results, raw_count, sstp_count, source):
     return data
 
 
-CHAIN_URL = os.environ.get("CHAIN_URL", "https://jerylihub.github.io/gate/chains.txt")
-
-
 def build_chains_text(data):
     """生成 edgetunnel 链式代理清单: 按国家分组, 每国编号固定, 住宅优先, 延迟升序。
     每行 = 「名字 + $sstp://vpn:vpn@host:port」, 名字不变, 指令每 30 分钟自动换。"""
@@ -454,133 +589,19 @@ def build_chains_text(data):
     return "\n".join(lines) + "\n"
 
 
-# edgetunnel 入口地址池: 客户端直连 Cloudflare 的优选 IP:端口 (循环分配给每个国家节点当入口)
-# 可通过环境变量 EDGE_HOSTS 覆盖 (逗号分隔)
-EDGE_HOSTS = [
-    h.strip()
-    for h in os.environ.get(
-        "EDGE_HOSTS",
-         "cdn.555586.xyz:443,"
-    "www.gov.il:443,"
-    "www.vmware.com:443,"
-    "so.360832.xyz:443,"
-    "www.blibli.com:443,"
-    "mfa.gov.ua:443,"
-    "wppaunz.com:443,"
-    "53.fs1.hubspotusercontent-na1.net:443,"
-    "academy.7shifts.com:443,"
-    "www.shopify.com:443,"
-    "cf.090227.xyz:443,"
-    "idc.urkeji.com:443,"
-    "www.mastervolt.com:443,"
-    "guide.for.edu.sg:443,"
-    "www.bangbenjiaju.com:443,"
-    "www.dbs.com.sg:443,"
-    "baota.us.kg:443,"
-    "staticdelivery.nexusmods.com:443,"
-    "www.dentoncounty.gov:443,"
-    "linear.app:443,"
-    "www.zendesk.com:443,"
-    "cmcc.cc.cd:443,"
-    "www.mc.js.cool:443,"
-    "store.ubi.com:443,"
-    "jobsdb.com:443,"
-    "cf.777791.xyz:443,"
-    "kniu.cc:443,"
-    "op.chinwa.eu.cc:443,"
-    "dnew.cc:443,"
-    "www.giannidelprete.it:443,"
-    "hzytjy.cn:443,"
-    "markmonitor.com:443,"
-    "openai.com:443,"
-    "funko.com:443,"
-    "www.leics.police.uk:443,"
-    "versantstore.pearson.com:443,"
-    "securecircle.com:443,"
-    "kickstarter.com:443,"
-    "www.vastnovel.com:443,"
-    "thebeat.gehealthcare.com:443,"
-    "www.crazygames.fr:443,"
-    "serviceshub.samsclub.com:443,"
-    "www.carousell.sg:443,"
-    "cf.yj250.bond:443,"
-    "www.xiaoshuofen.com:443,"
-    "www.udacity.com:443,"
-    "img.css.sd:443,"
-    "www.wto.org:443,"
-    "www.sage.com:443,"
-    "mail.notion.com:443,"
-    "vps.cheng2001.top:443,"
-    "cf.itv888.cn:443,"
-    "www.5h.com:443,"
-    "p.etime.vip:443,"
-    "constitution.congress.gov:443,"
-    "cdn.cnno.de:443,"
-    "www.galgamex.net:443,"
-    "cloudflare.idc.rocks:443,"
-    "www.sofi.com:443,"
-    "spring.io:443,"
-    "cf.3666888.xyz:443,"
-    "neko.cloudd.eu.org:443,"
-    "ahrefs.com:443,"
-    "www.bis.gov:443,"
-    "egov.uscis.gov:443,"
-    "www.swowd.com:443,"
-    "cf.1o.ee:443,"
-    "www.broadcom.com:443,"
-    "www.akasantech.com:443,"
-    "fn.130519.xyz:443,"
-    "cdn.7zz.cn:443,"
-    "m.iyf.tv:443,"
-    "coreweave.com:443,"
-    "cdn.ddeed.de:443,"
-    "stores.staples.com:443,"
-    "uspto.gov:443,"
-    "c-power.com.cn:443,"
-    "cf.92555.xyz:443,"
-    "prizepicks.com:443,"
-    "www.mfyx.cn:443,"
-    "cf.xreak.top:443,"
-    "cdn.204910.best:443,"
-    "cfplus.255520.xyz:443,"
-    "bbs.alipansou.com:443,"
-    "auto.dolby.dpdns.org:443,"
-    "www.deepl.com:443,"
-    "login.rockwellautomation.com:443,"
-    "www.sloomb.com:443,"
-    "saas.sin.fan:443,"
-    "cdn.667891.xyz:443,"
-    "tt.78607323.xyz:443,"
-    "www.wuduanyun.com:443,"
-    "saas.072159.xyz:443,"
-    "eii.at:443,"
-    "cf.nyanya.moe:443,"
-    "cf.254301.xyz:443,"
-    "cdn.ctn32.us.kg:443,"
-    "api.gzcrtw.com:443,"
-    "cf.877774.xyz:443,"
-    "224322.xyz:443,"
-    "cf-cname.xingpingcn.top:443,"",
-    ).split(",")
-    if h.strip()
-]
-
-HOSTS_URL = os.environ.get("HOSTS_URL", "https://jerylihub.github.io/gate/hosts.txt")
-
-
 def build_hosts_text(data):
     """生成可直接粘贴到 edgetunnel 后台「自定义优选IP」框的清单。
     每行 = 入口地址#名字$sstp://... ; 名字固定, 底下 SSTP 节点每 30 分钟自动换。"""
     countries = data["countries"]
-    # 入口: 默认用 7 个实测可用优选域名循环分配; 可用 HOSTS_ENTRY 覆盖(逗号分隔)
+    # 入口: 默认用实测可用优选域名循环分配; 可用 HOSTS_ENTRY 覆盖(逗号分隔)
     _entry = os.environ.get("HOSTS_ENTRY", "").strip()
-    edge = [e.strip() for e in _entry.split(",") if e.strip()] or EDGE_HOSTS or [f"{EDT_DOMAIN}:443"]
+    edge = [e.strip() for e in _entry.split(",") if e.strip()] or EDGE_HOSTS
     lines = [
         "# edgetunnel「自定义优选IP」清单 (整段复制, 追加到后台现有内容后面)",
         f"# 自动更新: {data['generated_at']} (每 30 分钟重新检测)",
         f"# 固定地址: {HOSTS_URL}",
         "# 每行 = 入口地址#名字$sstp://vpn:vpn@节点:端口",
-        "# 入口用 7 个实测可用优选域名循环分配",
+        "# 入口用优选域名循环分配",
         "# 名字 = 国家-住宅/机房-编号, 直接区分住宅与机房",
         "# 名字固定; 只有 $sstp:// 后面的节点地址每 30 分钟自动更换",
         "# 账号密码固定 vpn:vpn ; 节点端口必须保留",
@@ -618,14 +639,6 @@ def build_hosts_text(data):
             idx += 1
             lines.append(f"{entry}#{zh}-机房-{i:02d}$sstp://vpn:vpn@{n['host']}:{n['port']}")
     return "\n".join(lines) + "\n"
-
-
-# edgetunnel 完整订阅 (vless://) 配置
-EDT_UUID = os.environ.get("EDT_UUID", "1f5b9308-8208-46a6-809b-f1f33a397bba")
-EDT_DOMAIN = os.environ.get("EDT_DOMAIN", "
-limang.annjek.us.ci")
-EDT_FINGERPRINT = os.environ.get("EDT_FINGERPRINT", "chrome")
-SUB_URL = os.environ.get("SUB_URL", "https://jerylihub.github.io/gate/sub.txt")
 
 
 def _b64_secret_encode(plaintext, secret):
@@ -698,7 +711,7 @@ def build_sub_text(data):
             link = (
                 f"vless://{EDT_UUID}@{EDT_DOMAIN}:443?security=tls&type=ws"
                 f"&host={EDT_DOMAIN}&fp={EDT_FINGERPRINT}&sni={EDT_DOMAIN}"
-                f"&path={path}&encryption=none&alpn=#{quote(name, safe='')}"
+                f"&path={path}&encryption=none&alpn=http/1.1#{quote(name, safe='')}"
             )
             lines.append(link)
     return "\n".join(lines) + "\n"
